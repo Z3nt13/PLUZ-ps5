@@ -1,1 +1,54 @@
-```yaml name: Add Payload description: Add a new payload entry to payload_registry.json title: "[Add Payload]: " labels: ["add-payload"] body: - type: input id: name attributes: label: Payload Name validations: required: true - type: input id: variant attributes: label: Variant (optional) - type: input id: version attributes: label: Version validations: required: true - type: input id: ext attributes: label: File Extension (e.g. elf, bin) validations: required: true - type: input id: fw_compat attributes: label: Firmware Compatibility (e.g. 9.00-11.50) - type: input id: ports attributes: label: Ports (comma-separated, leave blank if none) - type: textarea id: description attributes: label: Description - type: textarea id: notes attributes: label: Notes - type: dropdown id: protected_fallback attributes: label: Protected Fallback? options: - "No" - "Yes" - type: input id: expiry attributes: label: Expiry Date (YYYYMMDD, leave blank if none) ```
+name: Add Payload
+description: Add a new payload entry to payload_registry.json
+title: "[Add Payload]: "
+labels: ["add-payload"]
+body:
+  - type: input
+    id: name
+    attributes:
+      label: Payload Name
+    validations:
+      required: true
+  - type: input
+    id: variant
+    attributes:
+      label: Variant (optional)
+  - type: input
+    id: version
+    attributes:
+      label: Version
+    validations:
+      required: true
+  - type: input
+    id: ext
+    attributes:
+      label: File Extension (e.g. elf, bin)
+    validations:
+      required: true
+  - type: input
+    id: fw_compat
+    attributes:
+      label: Firmware Compatibility (e.g. 9.00-11.50)
+  - type: input
+    id: ports
+    attributes:
+      label: Ports (comma-separated, leave blank if none)
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+  - type: dropdown
+    id: protected_fallback
+    attributes:
+      label: Protected Fallback?
+      options:
+        - "No"
+        - "Yes"
+  - type: input
+    id: expiry
+    attributes:
+      label: Expiry Date (YYYYMMDD, leave blank if none)
