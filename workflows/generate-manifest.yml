@@ -1,0 +1,15 @@
+name: Generate Manifest
+# PLACEHOLDER - not built yet.
+# This will read payload_registry.json, apply the locked retention rules
+# (main = latest 1 per payload/variant, hosted = latest 3, protected_fallback
+# entries exempt from pruning), and write manifests/main.json + manifests/hosted.json.
+on:
+  workflow_dispatch: {}
+
+jobs:
+  build-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: TODO
+        run: echo "Manifest generator not implemented yet."
