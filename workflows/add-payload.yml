@@ -1,0 +1,79 @@
+name: Add Payload From Issue
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  add-payload:
+    if: contains(github.event.issue.labels.*.name, 'add-payload')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse and append
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const body = context.payload.issue.body;
+
+            function field(label) {
+              const re = new RegExp(`### ${label}\\s*\\n\\s*([\\s\\S]*?)(?=\\n### |$)`);
+              const m = body.match(re);
+              return m ? m[1].trim() : "";
+            }
+
+            const name = field("Payload Name");
+            const variant = field("Variant \\(optional\\)") || null;
+            const version = field("Version");
+            const ext = field("File Extension \\(e\\.g\\. elf, bin\\)");
+            const fw_compat = field("Firmware Compatibility \\(e\\.g\\. 9\\.00-11\\.50\\)");
+            const portsRaw = field("Ports \\(comma-separated, leave blank if none\\)");
+            const ports = portsRaw ? portsRaw.split(",").map(p => parseInt(p.trim())).filter(n => !isNaN(n)) : [];
+            const description = field("Description");
+            const notes = field("Notes");
+            const protectedRaw = field("Protected Fallback\\?");
+            const protected_fallback = protectedRaw.toLowerCase() === "yes";
+            const expiry = field("Expiry Date \\(YYYYMMDD, leave blank if none\\)") || null;
+
+            if (!name || !version || !ext) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner, repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: "⚠️ Missing a required field (name, version, or extension). Nothing was added — edit and reopen, or file a new one."
+              });
+              return;
+            }
+
+            const filename = `${name}${variant ? "-" + variant : ""}_v${version}${expiry ? "_Expi" + expiry : ""}.${ext}`;
+            const entry = {
+              id: filename.replace(/\.[^/.]+$/, "").toLowerCase(),
+              name, variant, version, ext, filename,
+              fw_compat, ports, description, notes,
+              protected_fallback, expiry,
+              added_via: "issue-form"
+            };
+
+            const path = "payload_registry.json";
+            const registry = JSON.parse(fs.readFileSync(path, "utf8"));
+            registry.push(entry);
+            fs.writeFileSync(path, JSON.stringify(registry, null, 2) + "\n");
+
+            await exec.exec("git", ["config", "user.name", "github-actions[bot]"]);
+            await exec.exec("git", ["config", "user.email", "github-actions[bot]@users.noreply.github.com"]);
+            await exec.exec("git", ["add", path]);
+            await exec.exec("git", ["commit", "-m", `Add payload: ${filename}`]);
+            await exec.exec("git", ["push"]);
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `✅ Added **${filename}** to the registry.`
+            });
+            await github.rest.issues.update({
+              owner: context.repo.owner, repo: context.repo.repo,
+              issue_number: context.issue.number, state: "closed"
+            });
