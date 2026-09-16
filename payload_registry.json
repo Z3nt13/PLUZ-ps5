@@ -1,0 +1,32 @@
+[
+  {
+    "id": "etahen-zecoxao-v2.6b",
+    "name": "etaHEN",
+    "variant": "Zecoxao",
+    "version": "2.6B",
+    "ext": "elf",
+    "filename": "etaHEN-Zecoxao_v2.6B.elf",
+    "fw_compat": "11.00-11.40",
+    "ports": [],
+    "description": "Jailbreak enabler / kernel exploit loader fork by Zecoxao.",
+    "notes": "More stable on FW 11.40 than the current EchoStretch mainline beta; kept as a permanent fallback.",
+    "protected_fallback": true,
+    "expiry": null,
+    "added_via": "seed"
+  },
+  {
+    "id": "ftp-server-v1.0",
+    "name": "FTP Server",
+    "variant": null,
+    "version": "1.0",
+    "ext": "elf",
+    "filename": "FTPServer_v1.0.elf",
+    "fw_compat": "9.00-11.50",
+    "ports": [2121],
+    "description": "Basic FTP server payload for file transfer to/from the PS5.",
+    "notes": "Placeholder — swap in your actual build's real port/FW details.",
+    "protected_fallback": false,
+    "expiry": null,
+    "added_via": "seed"
+  }
+]
